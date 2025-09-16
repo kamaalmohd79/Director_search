@@ -73,3 +73,109 @@ Director_search/
 │── composer.json         # PHP dependencies
 │── requirements.txt      # Python dependencies
 
+---
+## 🔄 Execution Flow
+
+<img src="public/screenshots/diagram-1.png" width="800" alt="Execution diagram"><br>
+
+---
+
+## 🗂️ Data Pipeline
+
+<img src="public/screenshots/diagram-2.png" width="800" alt="Data pipeline diagram"><br>
+
+---
+
+## 📸 Screenshots
+
+<img src="public/screenshots/screenshot-1.png" width="800" alt="Search Page"><br>
+
+---
+
+## ⚡ Quick Start
+
+### 1️⃣ Installation
+
+    ```bash
+    # Clone repo
+    git clone https://github.com/kamaalmohd79/Director_search.git
+
+    cd Director_search
+    # Install PHP dependencies
+    composer install
+
+    # Install Python dependencies
+    pip install -r python/requirements.txt
+
+    # Setup environment file
+    cp .env.example .env
+    php artisan key:generate
+
+    # Run migrations
+    php artisan migrate
+    ```
+### 2️⃣ Run Localhost
+
+    ```bash
+    # Start Laravel
+    php artisan serve
+
+    # Start Python processing (if required)
+    python python/main.py
+    ```
+
+---
+
+## ⚙️ How It Works
+
+- User enters search criteria in the form
+- Laravel sends a request to Companies House API
+- Python backend processes and formats data
+- Geolocation engine calculates distance matrix
+- Blade templates render results with analytics
+
+---
+
+## 🧑‍💻 Tech Stack
+
+- Backend: PHP (Laravel), Python
+- Frontend: Blade Templates, Bootstrap
+- Database: MySQL/SQLite
+- API: Companies House API
+
+---
+
+## 📦 Python Requirements
+
+- requests
+- pandas
+- geopy
+- jsonlib
+
+    (See python/requirements.txt for full list)
+
+---
+
+## 🤝 Contributing
+
+- Contributions are welcome!
+- Fork the repo
+- Create your branch (git checkout -b feature-xyz)
+- Commit changes (git commit -m "Add feature xyz")
+- Push and create a PR
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License.
+
+---
+
+## 🙌 Credits
+
+Developer: Mohammad. Kamaal
+Prepared By (SOW): Raj Ahmed – Funding Alt
+Data Source: Companies House API
+
+---
