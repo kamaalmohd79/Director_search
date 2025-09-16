@@ -27,7 +27,6 @@ class PythonGeoService
 
         // If Python failed or returned invalid JSON, DO NOT blow up the page.
         if (!$proc->isSuccessful()) {
-            \Log::error('Python geo failed', ['stderr' => $stderr]);
             return [
                 'officers'        => $officers,
                 'distance_matrix' => [],
@@ -46,7 +45,6 @@ class PythonGeoService
 
         $data = json_decode($stdout, true);
         if (!is_array($data)) {
-            \Log::error('Python geo returned non-JSON', ['stdout' => $stdout, 'stderr' => $stderr]);
             return [
                 'officers'        => $officers,
                 'distance_matrix' => [],

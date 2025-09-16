@@ -32,7 +32,6 @@ class CompaniesHouseClient
                 'start_index'   => $start,
             ]);
 
-        \Log::debug('CH /search/officers', ['status' => $res->status()]);
         $res->throw();
 
         $items = $res->json()['items'] ?? [];
@@ -115,7 +114,6 @@ class CompaniesHouseClient
         $res = Http::withHeaders($this->authHeaders())
             ->get($this->base . '/officers/' . $officerId . '/appointments');
 
-        \Log::debug('CH /officers/{id}/appointments', ['id' => $officerId, 'status' => $res->status()]);
         $res->throw();
         return $res->json();
     }
@@ -165,7 +163,6 @@ class CompaniesHouseClient
 
                 $count++;
             } catch (\Throwable $e) {
-                \Log::warning('Officer enrichment failed', ['id' => $officerId, 'e' => $e->getMessage()]);
             }
         }
 
