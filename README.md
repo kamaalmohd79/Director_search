@@ -6,6 +6,7 @@
 
 ## 📖 Overview
 The **Director Search Application** is a web-based tool that integrates with the **Companies House API** to provide detailed director information along with geolocation analysis.  
+
 It is built with **Laravel (PHP)** for the frontend and **Python** for backend processing.
 
 ---
