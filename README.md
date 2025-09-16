@@ -90,7 +90,13 @@ Director_search/
 
 ## 📸 Screenshots
 
-<img src="public/screenshots/screenshot-1.png" width="800" alt="Search Page"><br>
+### Input Screen
+
+<img src="public/screenshots/ss-1.png" width="800" alt="Search Page"><br>
+
+### Result Screen
+
+<img src="public/screenshots/ss-2.png" width="800" alt="Search Page">
 
 ---
 
