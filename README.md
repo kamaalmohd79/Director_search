@@ -176,8 +176,8 @@ This project is licensed under the MIT License.
 
 ## 🙌 Credits
 
-Developer: Mohammad. Kamaal
-Prepared By (SOW): Raj Ahmed – Funding Alt
+Developer: Mohammad. Kamaal<br>
+Prepared By (SOW): Raj Ahmed – Funding Alt<br>  
 Data Source: Companies House API
 
 ---
