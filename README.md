@@ -73,6 +73,7 @@ Director_search/
 │── .env                  # Environment config (API keys, DB)
 │── composer.json         # PHP dependencies
 │── requirements.txt      # Python dependencies
+```
 
 ---
 ## 🔄 Execution Flow
