@@ -1,61 +1,75 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# 🕵️‍♂️ Director Search Application
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+[![Repo Link](https://img.shields.io/badge/GitHub-Director_Search-blue?logo=github)](https://github.com/kamaalmohd79/Director_search)
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 📖 Overview
+The **Director Search Application** is a web-based tool that integrates with the **Companies House API** to provide detailed director information along with geolocation analysis.  
+It is built with **Laravel (PHP)** for the frontend and **Python** for backend processing.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+---
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## ❓ What is the Director Search Application?
+It is a powerful tool that allows users to **search company directors** by first name, surname, and postcode, then view:
+- Associated companies
+- Full addresses
+- Geographical distances between directors
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## 🎯 Purpose
+The purpose of this application is to:
+- Simplify the retrieval of **official director data** from the Companies House API  
+- Provide users with a **clean UI** for searching and analyzing directors  
+- Enable **geolocation insights** such as distance calculations between directors  
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+---
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## 💡 Why Use This Project?
+- ✅ Direct integration with **Companies House API**  
+- ✅ Quick access to director and company data  
+- ✅ **Geolocation distance matrix** between addresses  
+- ✅ Open-source and extensible for future enhancements  
 
-## Laravel Sponsors
+---
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+## 🚀 Features
+- 🔍 **Search Directors** by first name, surname, or postcode  
+- 🏢 **Retrieve Company Information** linked to directors  
+- 📍 **Geolocation Calculations** between director addresses  
+- 📊 **Search Analytics & Counters**  
+- 🎨 User-friendly **Blade UI templates**  
 
-### Premium Partners
+---
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## 🛠️ Frameworks Used
+- **Laravel 10+ (PHP 8.1+)** → Web application & Blade views  
+- **Python 3.8+** → API data processing & geolocation logic  
+- **MySQL / SQLite** → Storing counters & session management  
+- **Companies House API** → Director & company data source  
 
-## Contributing
+---
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## 📈 Expected Result
+After performing a search:
+- The app retrieves **directors’ details** from Companies House API  
+- Displays **names, companies, and addresses** in a structured layout  
+- Shows **calculated distances** between director addresses  
+- Provides **search statistics**  
 
-## Code of Conduct
+---
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+## 📂 Project Scaffold & Structure
+```bash
+Director_search/
+│── app/                  # Laravel application code
+│── resources/views/      # Blade templates (UI)
+│── routes/web.php        # Web routes
+│── public/               # Public assets
+│── python/               # Python backend scripts
+│── database/             # Migrations & models
+│── .env                  # Environment config (API keys, DB)
+│── composer.json         # PHP dependencies
+│── requirements.txt      # Python dependencies
 
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
