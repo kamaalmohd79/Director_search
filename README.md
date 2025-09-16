@@ -78,7 +78,7 @@ Director_search/
 ---
 ## 🔄 Execution Flow
 
-<img src="public/screenshots/diagram-1.png" width="800" alt="Execution diagram"><br>
+<img src="public/screenshots/diagram-1.png" width="150" alt="Execution diagram"><br>
 
 ---
 
