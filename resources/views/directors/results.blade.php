@@ -198,7 +198,7 @@ $missing = collect($officers)->where('geo_status', 'missing')->count();
 @if(!empty($distanceMatrix) && is_iterable($distanceMatrix))
 <div class="card mt-4">
   <div class="card-body">
-    <h5 class="card-title">Distance Matrix (km)</h5>
+    <h5 class="card-title">Pairs Distance Matrix (km)</h5>
     <div class="table-responsive">
       <table class="table table-bordered table-sm">
         <tbody>
