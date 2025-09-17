@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use Illuminate\Support\Str;
 use App\Http\Requests\DirectorSearchRequest;
 use App\Models\SearchLog;
 use App\Models\SearchResult;
@@ -55,22 +55,24 @@ class DirectorSearchController extends Controller
             $errorMsg = 'Companies House API error: ' . $e->getMessage();
         }
 
-        // 3) Python geolocation → lat/lng + distance matrix (safe to skip on error)
+        // 3) Python geolocation
         $distanceMatrix = [];
         $stats = [];
+        $pairs = [];
         if (!$errorMsg && !empty($officers)) {
             try {
-                $enriched     = $geo->computeDistances($officers);
+                $enriched       = $geo->computeDistances($officers);
                 $officers       = $enriched['officers'] ?? $officers;
                 $distanceMatrix = $enriched['distance_matrix'] ?? [];
                 $stats          = $enriched['stats'] ?? [];
+                $pairs          = $enriched['pairs'] ?? [];
             } catch (\Throwable $e) {
                 Log::error('PythonGeoService failed', ['msg' => $e->getMessage()]);
                 $stats = ['error' => 'Distance calculation temporarily unavailable'];
             }
         }
 
-        // 4) Build rows for client columns + persist in DB (search_results)
+        // 4) Build rows for client columns + persist
         $rows = [];
         $searchedFullName = trim(($data['first_name'] ?? '') . ' ' . ($data['surname'] ?? ''));
 
@@ -79,40 +81,33 @@ class DirectorSearchController extends Controller
             $firstName  = $o['first_name'] ?? null;
             $lastName   = $o['last_name']  ?? null;
             $dob        = $o['dob']        ?? null;
-
             $apps = $o['director_appointments'] ?? [];
 
             if (empty($apps)) {
                 $rows[] = [
                     'search_log_id'      => $log->id,
-
                     'searchedPeopleId'   => null,
                     'searchedFirstName'  => $data['first_name'] ?? null,
                     'searchedSurname'    => $data['surname'] ?? null,
                     'searchedFullName'   => $searchedFullName,
                     'searchedDOB'        => null,
-
                     'peopleId'           => $peopleId,
                     'score'              => null,
                     'firstName'          => $firstName,
                     'lastName'           => $lastName,
                     'status'             => null,
                     'dateOfBirth'        => $dob,
-
                     'localDirectorNumber'=> null,
                     'isOriginalDirector' => null,
-
                     'companyId'          => null,
                     'companyName'        => null,
                     'companyNumber'      => null,
                     'safeNumber'         => null,
                     'companyType'        => null,
-
                     'address'            => $o['address'] ?? null,
                     'addressCity'        => $o['address_city'] ?? null,
                     'addressPostCode'    => $o['postcode'] ?? null,
                     'addressHouseNo'     => $o['address_house'] ?? null,
-
                     'created_at'         => now(),
                     'updated_at'         => now(),
                 ];
@@ -122,34 +117,28 @@ class DirectorSearchController extends Controller
             foreach ($apps as $app) {
                 $rows[] = [
                     'search_log_id'      => $log->id,
-
                     'searchedPeopleId'   => null,
                     'searchedFirstName'  => $data['first_name'] ?? null,
                     'searchedSurname'    => $data['surname'] ?? null,
                     'searchedFullName'   => $searchedFullName,
                     'searchedDOB'        => null,
-
                     'peopleId'           => $peopleId,
                     'score'              => null,
                     'firstName'          => $firstName,
                     'lastName'           => $lastName,
-                    'status'             => $app['status'] ?? null, // current | resigned
+                    'status'             => $app['status'] ?? null,
                     'dateOfBirth'        => $dob,
-
                     'localDirectorNumber'=> null,
                     'isOriginalDirector' => null,
-
                     'companyId'          => null,
                     'companyName'        => $app['company_name'] ?? null,
                     'companyNumber'      => $app['company_number'] ?? null,
                     'safeNumber'         => null,
                     'companyType'        => null,
-
                     'address'            => $o['address'] ?? null,
                     'addressCity'        => $o['address_city'] ?? null,
                     'addressPostCode'    => $o['postcode'] ?? null,
                     'addressHouseNo'     => $o['address_house'] ?? null,
-
                     'created_at'         => now(),
                     'updated_at'         => now(),
                 ];
@@ -160,12 +149,13 @@ class DirectorSearchController extends Controller
             SearchResult::insert($rows);
         }
 
-        // 5) Render view with officers + client grid
+        // 5) Render view
         return view('directors.results', [
             'query'          => $data,
             'officers'       => $officers,
             'distanceMatrix' => $distanceMatrix,
             'stats'          => $stats,
+            'pairs'          => $pairs,   // NEW
             'start_index'    => $startIndex,
             'items_per_page' => $perPage,
             'error'          => $errorMsg,
@@ -173,4 +163,3 @@ class DirectorSearchController extends Controller
         ]);
     }
 }
-        

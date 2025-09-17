@@ -15,7 +15,19 @@
   </div>
 </div>
 
+@php
+// Pre-slice pairs once so we can reuse
+$pairsTop10 = array_slice($pairs ?? [], 0, 10);
+
+// Geocoding diagnostic counts
+$withPc = collect($officers)->filter(fn($o) => !empty($o['postcode']))->count();
+$okCount = collect($officers)->where('geo_status', 'ok')->count();
+$invalid = collect($officers)->where('geo_status', 'invalid')->count();
+$missing = collect($officers)->where('geo_status', 'missing')->count();
+@endphp
+
 <div class="row g-3">
+  {{-- SUMMARY + DIAGNOSTICS --}}
   <div class="col-md-4">
     <div class="card h-100">
       <div class="card-body">
@@ -23,83 +35,49 @@
         <ul class="mb-0">
           <li>Total officers (directors only): {{ count($officers) }}</li>
           <li>Pairs: {{ $stats['count_pairs'] ?? 0 }}</li>
-          <li>Min/Avg/Max (km): {{ $stats['min_km'] ?? '—' }} / {{ $stats['avg_km'] ?? '—' }} / {{ $stats['max_km'] ?? '—' }}</li>
+          <li>
+            Min/Avg/Max (km):
+            {{ isset($stats['min_km']) ? round($stats['min_km'], 2) : '—' }} /
+            {{ isset($stats['avg_km']) ? round($stats['avg_km'], 2) : '—' }} /
+            {{ isset($stats['max_km']) ? round($stats['max_km'], 2) : '—' }}
+          </li>
         </ul>
 
-        {{-- Diagnostics if no pairs --}}
-        @if(!empty($stats) && (($stats['count_pairs'] ?? 0) == 0))
         <div class="alert alert-info mt-3">
           <div class="fw-semibold mb-1">Geocoding diagnostics</div>
-          <div>Distances weren’t computed because there were no valid postcode pairs.</div>
-          <ul class="mb-0 mt-2 small">
-            <li>Total officers with postcode: {{ $stats['count_geocoded'] ?? 0 }}</li>
-            <li>Total officers missing/invalid postcode: {{ $stats['count_skipped'] ?? 0 }}</li>
+          <ul class="mb-0">
+            <li>Officers with a postcode: {{ $withPc }}</li>
+            <!-- <li>Geocoded OK: {{ $okCount }}</li>
+            <li>Missing postcodes: {{ $missing }}</li>
+            <li>Invalid postcodes: {{ $invalid }}</li> -->
+            <li>Total pairs computed: {{ $stats['count_pairs'] ?? 0 }}</li>
           </ul>
-          @if(!empty($stats['skipped']))
-          <details class="mt-2">
-            <summary class="small text-muted">View skipped officers</summary>
-            <ul class="small mb-0 mt-2">
-              @foreach($stats['skipped'] as $s)
-              <li>
-                {{ $s['name'] ?? 'Unknown' }} —
-                postcode: {{ $s['postcode'] ?? 'N/A' }} —
-                reason: {{ $s['reason'] ?? 'unknown' }}
-              </li>
-              @endforeach
-            </ul>
-          </details>
-          @endif
         </div>
-        @endif
-
       </div>
     </div>
   </div>
 
+  {{-- DIRECTORS TABLE --}}
   <div class="col-md-8">
     <div class="card">
       <div class="card-body">
         <h5 class="card-title">Directors</h5>
         <div class="table-responsive">
-          <table class="table table-sm align-middle">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Name</th>
-                <th>Postcode</th>
-                <th>Current</th>
-                <th>Resigned</th>
-              </tr>
-            </thead>
+          <table class="table table-bordered table-sm">
             <tbody>
-              @forelse($officers as $i => $o)
+              @foreach($officers as $i => $o)
               <tr>
                 <td>{{ $i+1 }}</td>
                 <td>
                   {{ $o['name'] }}
                   <span class="badge bg-success ms-1">Director</span>
-
-                  @php
-                  $geo = $o['geo_status'] ?? null;
-                  // fallback if a very old result has no 'geo_status'
-                  if (!$geo) {
-                  $pc = trim($o['postcode'] ?? '');
-                  if ($pc === '') {
-                  $geo = 'missing';
-                  } elseif (!empty($o['lat']) && !empty($o['lng'])) {
-                  $geo = 'ok';
-                  } else {
-                  $geo = 'failed';
-                  }
-                  }
-                  @endphp
-
-                  @if($geo === 'missing')
-                  <span class="badge bg-warning ms-2">no postcode</span>
-                  @elseif($geo === 'failed')
-                  <span class="badge bg-secondary ms-2">unresolvable</span>
-                  @elseif($geo === 'ok')
-                  <span class="badge bg-success ms-2">geo✓</span>
+                  @php $gs = $o['geo_status'] ?? null; @endphp
+                  @if($gs === 'ok')
+                  <span class="badge bg-primary ms-1">ok</span>
+                  @elseif($gs === 'invalid')
+                  <span class="badge bg-warning text-dark ms-1">invalid</span>
+                  @elseif($gs === 'missing')
+                  <span class="badge bg-secondary ms-1">missing</span>
                   @endif
                 </td>
 
@@ -107,11 +85,7 @@
                 <td>{{ $o['current_director_count'] ?? 0 }}</td>
                 <td>{{ $o['resigned_director_count'] ?? 0 }}</td>
               </tr>
-              @empty
-              <tr>
-                <td colspan="5" class="text-center text-muted">No directors found</td>
-              </tr>
-              @endforelse
+              @endforeach
             </tbody>
           </table>
         </div>
@@ -120,6 +94,38 @@
   </div>
 </div>
 
+{{-- CLOSEST PAIRS (TOP 10) --}}
+@if(!empty($pairsTop10))
+<div class="card mt-4">
+  <div class="card-body">
+    <h5 class="card-title">Closest Director Pairs</h5>
+    <div class="table-responsive">
+      <table class="table table-sm align-middle">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>From</th>
+            <th>To</th>
+            <th>Distance (km)</th>
+          </tr>
+        </thead>
+        <tbody>
+          @foreach($pairsTop10 as $k => $p)
+          <tr>
+            <td>{{ $k+1 }}</td>
+            <td>{{ $p['from'] }}</td>
+            <td>{{ $p['to'] }}</td>
+            <td>{{ round($p['km'], 2) }}</td>
+          </tr>
+          @endforeach
+        </tbody>
+      </table>
+    </div>
+    <div class="text-muted small">Showing top {{ count($pairsTop10) }} of {{ count($pairs) }} pairs.</div>
+  </div>
+</div>
+@endif
+
 {{-- CLIENT GRID --}}
 @if(isset($grid) && count($grid))
 <div class="card mt-4">
@@ -127,34 +133,32 @@
     <h5 class="card-title">Client Format (Directors × Appointments)</h5>
     <div class="table-responsive">
       <table class="table table-bordered table-sm align-middle">
-   <thead>
-  <tr>
-    <th>Searched People Id</th>
-    <th>Searched First Name</th>
-    <th>Searched Surname</th>
-    <th>Searched Full Name</th>
-    <th>Searched DOB</th>
-    <th>People Id</th>
-    <th>Score</th>
-    <th>First Name</th>
-    <th>Last Name</th>
-    <th>Status</th>
-    <th>Date Of Birth</th>
-    <th>Local Director Number</th>
-    <th>Is Original Director</th>
-    <th>Company Id</th>
-    <th>Company Name</th>
-    <th>Company Number</th>
-    <th>Safe Number</th>
-    <th>Company Type</th>
-    <th>Address</th>
-    <th>Address City</th>
-    <th>Address Post Code</th>
-    <th>Address House No</th>
-  </tr>
-</thead>
-
-
+        <thead>
+          <tr>
+            <th>Searched People Id</th>
+            <th>Searched First Name</th>
+            <th>Searched Surname</th>
+            <th>Searched Full Name</th>
+            <th>Searched DOB</th>
+            <th>People Id</th>
+            <th>Score</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Status</th>
+            <th>Date Of Birth</th>
+            <th>Local Director Number</th>
+            <th>Is Original Director</th>
+            <th>Company Id</th>
+            <th>Company Name</th>
+            <th>Company Number</th>
+            <th>Safe Number</th>
+            <th>Company Type</th>
+            <th>Address</th>
+            <th>Address City</th>
+            <th>Address Post Code</th>
+            <th>Address House No</th>
+          </tr>
+        </thead>
         <tbody>
           @foreach($grid as $r)
           <tr>
@@ -190,8 +194,8 @@
 </div>
 @endif
 
-{{-- optional distance matrix display --}}
-@if(!empty($distanceMatrix))
+{{-- OPTIONAL raw distance matrix --}}
+@if(!empty($distanceMatrix) && is_iterable($distanceMatrix))
 <div class="card mt-4">
   <div class="card-body">
     <h5 class="card-title">Distance Matrix (km)</h5>
@@ -200,9 +204,13 @@
         <tbody>
           @foreach($distanceMatrix as $r)
           <tr>
+            @if(is_iterable($r))
             @foreach($r as $cell)
-            <td>{{ is_null($cell) ? '—' : $cell }}</td>
+            <td>{{ is_null($cell) ? '—' : round($cell, 2) }}</td>
             @endforeach
+            @else
+            <td>{{ is_null($r) ? '—' : round($r, 2) }}</td>
+            @endif
           </tr>
           @endforeach
         </tbody>
